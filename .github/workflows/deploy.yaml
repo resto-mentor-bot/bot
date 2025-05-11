@@ -37,6 +37,10 @@ jobs:
           script: |
             set -e
             cd ${{ env.REMOTE_PATH }}
+            cd ..
+            mkdir empty_dir
+            rsync -a --delete --exclude=home empty_dir/ folder/
+            rm -rf empty_dir
 
             mv ${{ env.REMOTE_PATH }}/home/runner/work/bot/bot/* ${{ env.REMOTE_PATH }}
             rm -rf ${{ env.REMOTE_PATH }}/home
