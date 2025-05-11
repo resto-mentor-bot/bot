@@ -21,7 +21,6 @@ from telegram.ext import (
 
 # Импорт собственных модулей
 from assistance_create import *
-from handle_text_features import *
 from db_func import *
 
 import openai
@@ -546,8 +545,6 @@ async def handle_test_menu(query, context: ContextTypes.DEFAULT_TYPE) -> None:
     keyboard = [
         [InlineKeyboardButton("Основное меню", callback_data="test_main_menu")],
         [InlineKeyboardButton("Напитки", callback_data="test_drinks")],
-        [InlineKeyboardButton("Особенности работы", callback_data="test_work_features")],
-        [InlineKeyboardButton("Общий тест", callback_data="test_general")],
         [InlineKeyboardButton("Назад", callback_data="welcome")]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -1136,12 +1133,8 @@ async def handle_welcome(query) -> None:
     keyboard = [
         [InlineKeyboardButton("Основное меню", callback_data='main_menu')],
         [InlineKeyboardButton("Напитки", callback_data='drinks')],
-        [InlineKeyboardButton("Полезная информация", callback_data='work_features')],
         [InlineKeyboardButton("Тестирование", callback_data='test')],
-        [InlineKeyboardButton("Принять заказ", callback_data='take_order')],
         [InlineKeyboardButton("💬 Задать общий вопрос", callback_data='general_question')],
-        [InlineKeyboardButton("Полезные ссылки", callback_data='links')],
-        [InlineKeyboardButton("📖 Инструкция", callback_data="instruction")],
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     if query.message.text:
@@ -1164,7 +1157,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     keyboard = [[InlineKeyboardButton("Начать", callback_data="welcome")]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text(
-        "🍷 Добро пожаловать в бот ресторана *Хачапури и Вино*! 🍴\n\n"
+        "🍷 Добро пожаловать в Ментор бот! 🍴\n\n"
         "👉 Нажмите *Начать*, чтобы перейти к выбору раздела!",
         reply_markup=reply_markup,
         parse_mode="Markdown"
