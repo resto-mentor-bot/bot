@@ -24,7 +24,7 @@ jobs:
           host: ${{ env.HOST }}
           username: ${{ env.USERNAME }}
           key: ${{ env.KEY }}
-          source: bot/*
+          source: /home/runner/work/bot/bot
           target: ${{ env.REMOTE_PATH }}
 
       - name: Setup and run on remote
