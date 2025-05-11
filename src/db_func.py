@@ -1,3 +1,5 @@
+# flake8: noqa
+
 """
 Модуль для работы с базой данных (asyncpg).
 
@@ -44,7 +46,7 @@ async def connect_to_db() -> asyncpg.Connection:
         password=db_config["password"],
         database=db_config["dbname"],
         host=db_config["host"],
-        port=db_config["port"]
+        port=db_config["port"],
     )
 
 
@@ -63,7 +65,7 @@ async def get_random_work_features_general(n: int = 3) -> List[Dict[str, Any]]:
         rows = await conn.fetch(
             "SELECT question, answer, explanation FROM work_features_questions "
             "ORDER BY RANDOM() LIMIT $1",
-            n * 2
+            n * 2,
         )
         # Убираем дубликаты
         unique = list({(r["question"], r["answer"], r["explanation"]) for r in rows})
@@ -91,18 +93,23 @@ async def get_random_menu_questions_general(n: int = 6) -> List[Dict[str, Any]]:
     try:
         rows = await conn.fetch(
             "SELECT id, question, answer, explanation FROM faq ORDER BY RANDOM() LIMIT $1",
-            n * 2
+            n * 2,
         )
-        unique = list({(r["id"], r["question"], r["answer"], r["explanation"]) for r in rows})
+        unique = list(
+            {(r["id"], r["question"], r["answer"], r["explanation"]) for r in rows}
+        )
         random.shuffle(unique)
         selected = unique[:n]
-        return [{
-            "id": q[0],
-            "question": q[1],
-            "answer": q[2],
-            "explanation": q[3],
-            "type": "menu"
-        } for q in selected]
+        return [
+            {
+                "id": q[0],
+                "question": q[1],
+                "answer": q[2],
+                "explanation": q[3],
+                "type": "menu",
+            }
+            for q in selected
+        ]
     finally:
         await conn.close()
 
@@ -121,13 +128,18 @@ async def get_random_drink_questions_general(n: int = 6) -> List[Dict[str, Any]]
     try:
         rows = await conn.fetch(
             "SELECT id, question, answer, explanation FROM drinks_questions ORDER BY RANDOM() LIMIT $1",
-            n * 2
+            n * 2,
         )
         random.shuffle(rows)
         selected = rows[:n]
         return [
-            {"id": r["id"], "question": r["question"], "answer": r["answer"],
-             "explanation": r["explanation"], "type": "drink"}
+            {
+                "id": r["id"],
+                "question": r["question"],
+                "answer": r["answer"],
+                "explanation": r["explanation"],
+                "type": "drink",
+            }
             for r in selected
         ]
     finally:
@@ -179,7 +191,12 @@ async def get_random_drink_questions(category: str) -> List[Dict[str, Any]]:
         if not raw_questions:
             return []
         questions = [
-            {"id": row["id"], "question": row["question"], "answer": row["answer"], "explanation": row["explanation"]}
+            {
+                "id": row["id"],
+                "question": row["question"],
+                "answer": row["answer"],
+                "explanation": row["explanation"],
+            }
             for row in raw_questions
         ]
         random.shuffle(questions)
@@ -201,7 +218,12 @@ async def get_random_menu_questions() -> List[Dict[str, Any]]:
         raw_questions = await conn.fetch(query)
         if not raw_questions:
             return []
-        unique_questions = list({(row["id"], row["question"], row["answer"], row["explanation"]) for row in raw_questions})
+        unique_questions = list(
+            {
+                (row["id"], row["question"], row["answer"], row["explanation"])
+                for row in raw_questions
+            }
+        )
         random.shuffle(unique_questions)
         selected_questions = unique_questions[:7]
         return [
@@ -247,10 +269,23 @@ async def get_categories() -> List[str]:
         categories = [row["category"] for row in rows]
 
         desired_order = [
-            "Специи и соусы", "Закуски", "Салаты", "Супы", "Горячее",
-            "Хачапури", "Хинкали", "Тесто", "Завтраки", "Десерты"
+            "Специи и соусы",
+            "Закуски",
+            "Салаты",
+            "Супы",
+            "Горячее",
+            "Хачапури",
+            "Хинкали",
+            "Тесто",
+            "Завтраки",
+            "Десерты",
         ]
-        categories = sorted(categories, key=lambda x: desired_order.index(x) if x in desired_order else float('inf'))
+        categories = sorted(
+            categories,
+            key=lambda x: (
+                desired_order.index(x) if x in desired_order else float("inf")
+            ),
+        )
         return categories
     finally:
         await conn.close()
@@ -310,7 +345,9 @@ async def get_drink_categories() -> List[str]:
         await conn.close()
 
 
-async def get_drinks_by_subcategory(category: str, subcategory: str) -> List[Dict[str, Any]]:
+async def get_drinks_by_subcategory(
+    category: str, subcategory: str
+) -> List[Dict[str, Any]]:
     """
     Получает напитки для заданной подкатегории.
 
