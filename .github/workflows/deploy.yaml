@@ -38,6 +38,9 @@ jobs:
             set -e
             cd ${{ env.REMOTE_PATH }}
 
+            mv ${{ env.REMOTE_PATH }}/home/runner/work/bot/bot/* ${{ env.REMOTE_PATH }}
+            rm -rf ${{ env.REMOTE_PATH }}/home
+
             # 1) создаём (или обновляем) виртуальное окружение
             if [ ! -d "venv" ]; then
               python3 -m venv venv
