@@ -1,0 +1,68 @@
+name: Deploy to Remote
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      HOST: ${{ secrets.REMOTE_HOST }}
+      USERNAME: ${{ secrets.REMOTE_USER }}
+      KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      REMOTE_PATH: ${{ secrets.REMOTE_PATH }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Copy code to server
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ env.HOST }}
+          username: ${{ env.USERNAME }}
+          key: ${{ env.KEY }}
+          port: 22
+          source: "."
+          target: "${{ env.REMOTE_PATH }}"
+          rm: true
+          strip_components: 1
+
+      - name: Setup and run on remote
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ env.HOST }}
+          username: ${{ env.USERNAME }}
+          key: ${{ env.KEY }}
+          port: 22
+          script: |
+            set -e
+            cd ${{ env.REMOTE_PATH }}
+
+            # 1) создаём (или обновляем) виртуальное окружение
+            if [ ! -d "venv" ]; then
+              python3 -m venv venv
+            fi
+            source venv/bin/activate
+
+            # 2) устанавливаем зависимости
+            pip install --upgrade pip
+            pip install -r requirements.txt
+            pip install -r requirements-dev.txt || true
+
+            mv src/bot.py src/bot2.py
+
+            # 3) перезапускаем бот (последний запущенный процесс убьётся)
+            #    Используем nohup, чтобы бот жил независимо от SSH-сессии.
+            #    Предполагаем, что pid-файл хранится в bot.pid
+            if [ -f bot2.pid ]; then
+              kill "$(cat bot2.pid)" || true
+              rm bot2.pid
+            fi
+
+            nohup python src/bot2.py > bot2.log 2>&1 &
+            echo $! > bot2.pid
+
+            echo "✅ Deploy finished. Bot PID: $(cat bot2.pid)"
