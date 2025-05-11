@@ -18,17 +18,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Copy code to server
-        uses: appleboy/ssh-action@v1.2.2
+      - name: Copy code via SSH to server
+        uses: appleboy/scp-action@v1
         with:
           host: ${{ env.HOST }}
           username: ${{ env.USERNAME }}
           key: ${{ env.KEY }}
-          port: 22
-          source: "."
-          target: "${{ env.REMOTE_PATH }}"
-          rm: true
-          strip_components: 1
+          source: bot/*
+          target: ${{ env.REMOTE_PATH }}
 
       - name: Setup and run on remote
         uses: appleboy/ssh-action@v1.2.2
