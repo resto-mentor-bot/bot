@@ -1,3 +1,5 @@
+# flake8: noqa
+
 """
 Модуль для создания Vector Store с данными о меню, напитках и дополнительной информацией,
 а также для создания ассистента, использующего комбинированный поиск по файлам.
@@ -23,7 +25,9 @@ from export_json import (
 from bot import client
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
 def create_vector_store_with_menu_and_drinks() -> str:
@@ -56,7 +60,9 @@ def create_vector_store_with_menu_and_drinks() -> str:
     service_file_path = "../resources/service.txt"
 
     # Создаем Vector Store
-    vector_store = client.beta.vector_stores.create(name="Menu, Drinks, and Service Data Store")
+    vector_store = client.beta.vector_stores.create(
+        name="Menu, Drinks, and Service Data Store"
+    )
     logger.info("Создан Vector Store с ID: %s", vector_store.id)
 
     # Список всех путей к файлам для загрузки
@@ -77,8 +83,7 @@ def create_vector_store_with_menu_and_drinks() -> str:
 
         # Загружаем файлы в Vector Store
         file_batch = client.beta.vector_stores.file_batches.upload_and_poll(
-            vector_store_id=vector_store.id,
-            files=file_streams
+            vector_store_id=vector_store.id, files=file_streams
         )
 
     logger.info("Vector Store создан с ID: %s", vector_store.id)
@@ -103,7 +108,6 @@ def create_assistant_with_combined_file_search(vector_store_id: str) -> str:
         "Не упоминай название конкретного ресторана. Если данных нет, честно говори об этом. "
         "Не выдумывай новые позиции. Если пользователь просит изменить блюдо или соус, сообщай, что это невозможно."
     )
-
 
     assistant = client.beta.assistants.create(
         name="MentorBot Assistant",
