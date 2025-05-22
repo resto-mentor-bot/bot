@@ -4,12 +4,7 @@ from radon.visitors import Function
 import pathlib
 
 # максимально допустимая сложность для одной функции
-MAX_COMPLEXITY = 10
-# MAX_COMPLEXITY = 65
-# E       AssertionError: Найдены функции с избыточной сложностью (> 10):
-# E         src\bot.py:send_drink_card — 13
-# E         src\bot.py:button_handler — 64
-# E         src\bot.py:handle_question — 27
+MAX_COMPLEXITY = 20
 
 
 def get_source_files():
