@@ -4,7 +4,7 @@ from src.assistance_create import (
     create_assistant_with_combined_file_search,
     create_vector_store_with_menu_and_drinks,
 )
-
+#
 
 @pytest.fixture(autouse=True)
 def mock_openai_client(monkeypatch):
